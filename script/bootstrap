@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+log()   { printf -- "-----> $*\n" ; return $? ; }
+warn()  { printf -- ">>> $*\n" ; return $? ; }
+fail()  { printf -- "\nERROR: $*\n" ; exit 1 ; }
+
+if ! command -v direnv >/dev/null ; then
+  if [ "$(uname)" == "Darwin" ] && command -v brew >/dev/null ; then
+    log "Direnv package missing, installing from homebrew"
+    brew install direnv
+    eval $(direnv hook $SHELL)
+  else
+    warn "The direnv command is not installed and helps in configuring"
+    warn "this Chef repository."
+    warn ""
+    warn "Please visit https://github.com/zimbatm/direnv for more details."
+  fi
+fi
+
+if ! command -v bundle >/dev/null ; then
+  log "Installing bundler gem"
+  gem install bundler
+fi
+
+if ! bundle check >/dev/null ; then
+  log "Running bundle"
+  bundle install --binstubs --path vendor/bundle
+else
+  log "Bundler up to date, skipping bundle install"
+fi
+
+log "Running Berkshelf"
+"$(dirname $0)/../bin/berks" install

@@ -1,0 +1,8 @@
+# ignore bundler state and gems
+/.bundle/
+/vendor/bundle/
+
+# ignore vagrant state
+/.vagrant
+
+.rvmrc
