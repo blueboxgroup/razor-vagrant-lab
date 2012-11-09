@@ -1,18 +1,47 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-def box_url_for(name)
+require 'berkshelf/vagrant'
+
+def box_name
+  "opscode-ubuntu-12.04"
+end
+
+def box_url(name = box_name)
   "https://opscode-vm.s3.amazonaws.com/vagrant/boxes/#{name}.box"
 end
 
 Vagrant::Config.run do |config|
+  config.vm.box     = box_name
+  config.vm.box_url = box_url
+
+  config.vm.define :razor do |vm_config|
+    vm_config.vm.host_name = "razor.vagrantup.com"
+    vm_config.vm.network :hostonly, "172.16.33.11"
+
+    config.vm.provision :chef_solo do |chef|
+      chef.run_list = [
+        "recipe[razor]"
+      ]
+
+      chef.json = {
+        :razor => {
+          :images => {
+            'rz_mk_prod-image.0.9.1.6' => {
+              'type' => 'mk',
+              'url' => 'https://github.com/downloads/puppetlabs/Razor-Microkernel/rz_mk_prod-image.0.9.2.1.iso'
+            }
+          }
+        }
+      }
+    end
+  end
+
   # All Vagrant configuration is done here. The most common configuration
   # options are documented and commented below. For a complete reference,
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box     = "opscode-ubuntu-12.04"
-  config.vm.box_url = box_url_for(config.vm.box)
 
   # Assign this VM to a host-only network IP, allowing you to access it
   # via the IP. Host-only networks can talk to the host machine as well as
@@ -21,7 +50,7 @@ Vagrant::Config.run do |config|
   # config.vm.network :hostonly, "192.168.33.10"
 
   # Enable provisioning with chef solo, specifying a cookbooks path, roles
-  # path, and data_bags path (all relative to this Vagrantfile), and adding 
+  # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
   #
   # config.vm.provision :chef_solo do |chef|
