@@ -27,6 +27,61 @@ def razor_nodes
   ENV["RAZOR_NODES"] || 3
 end
 
+module ClientNode
+  def client_node?(env)
+    env["vm"].name.to_s =~ /^node\d+/
+  end
+end
+
+module SkipIfClientNode
+  include ClientNode
+
+  def call(env)
+    if client_node?(env)
+      @env = env
+      @app.call(env)
+    else
+      super
+    end
+  end
+end
+
+class BootWithNoSSH < Vagrant::Action::VM::Boot
+  include ClientNode
+
+  def call(env)
+    if client_node?(env)
+      @env = env
+      boot
+      @app.call(env)
+    else
+      super
+    end
+  end
+end
+
+class ProvisionSkipIfClientNode < Vagrant::Action::VM::NFS
+  include SkipIfClientNode
+end
+
+class NFSSkipIfClientNode < Vagrant::Action::VM::NFS
+  include SkipIfClientNode
+end
+
+class ShareFoldersSkipIfClientNode < Vagrant::Action::VM::ShareFolders
+  include SkipIfClientNode
+end
+
+class HostNameSkipIfClientNode < Vagrant::Action::VM::HostName
+  include SkipIfClientNode
+end
+
+Vagrant.actions[:start].replace(Vagrant::Action::VM::Provision, ProvisionSkipIfClientNode)
+Vagrant.actions[:start].replace(Vagrant::Action::VM::NFS, NFSSkipIfClientNode)
+Vagrant.actions[:start].replace(Vagrant::Action::VM::ShareFolders, ShareFoldersSkipIfClientNode)
+Vagrant.actions[:start].replace(Vagrant::Action::VM::HostName, HostNameSkipIfClientNode)
+Vagrant.actions[:start].replace(Vagrant::Action::VM::Boot, BootWithNoSSH)
+
 Vagrant::Config.run do |config|
   config.vm.define :razor do |vm_config|
     vm_config.vm.box      = "opscode-ubuntu-12.04"
