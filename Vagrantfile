@@ -23,6 +23,10 @@ def mk_url_prefix
   ENV["MK_URL_PREFIX"] || "https://github.com/downloads/puppetlabs/Razor-Microkernel"
 end
 
+def razor_nodes
+  ENV["RAZOR_NODES"] || 3
+end
+
 Vagrant::Config.run do |config|
   config.vm.define :razor do |vm_config|
     vm_config.vm.box      = "opscode-ubuntu-12.04"
@@ -58,7 +62,7 @@ Vagrant::Config.run do |config|
   end
 
   # create some razor client nodes
-  3.times do |i|
+  razor_nodes.to_i.times do |i|
     config.vm.define :"node#{i+1}" do |vm_config|
       vm_config.vm.box        = "blank-amd64"
 
