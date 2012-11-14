@@ -46,6 +46,21 @@ module SkipIfClientNode
   end
 end
 
+# Short-circuit vagrant middlewares that are assuming a normal base box.
+# For razor client nodes there is no need to prepare provisioners,
+# nfs mounts, etc.
+%w[Provision NFS ShareFolders HostName].each do |klass|
+  Object.const_set("#{klass}SkipIfClientNode",
+    Class.new(Vagrant::Action::VM.const_get(klass)) do
+      include SkipIfClientNode
+    end
+  )
+
+  Vagrant.actions[:start].replace(Vagrant::Action::VM.const_get(klass),
+    Object.const_get("#{klass}SkipIfClientNode"))
+end
+
+# Short-cicuit the Boot middleware to not wait for an SSH connection.
 class BootWithNoSSH < Vagrant::Action::VM::Boot
   include ClientNode
 
@@ -59,27 +74,6 @@ class BootWithNoSSH < Vagrant::Action::VM::Boot
     end
   end
 end
-
-class ProvisionSkipIfClientNode < Vagrant::Action::VM::NFS
-  include SkipIfClientNode
-end
-
-class NFSSkipIfClientNode < Vagrant::Action::VM::NFS
-  include SkipIfClientNode
-end
-
-class ShareFoldersSkipIfClientNode < Vagrant::Action::VM::ShareFolders
-  include SkipIfClientNode
-end
-
-class HostNameSkipIfClientNode < Vagrant::Action::VM::HostName
-  include SkipIfClientNode
-end
-
-Vagrant.actions[:start].replace(Vagrant::Action::VM::Provision, ProvisionSkipIfClientNode)
-Vagrant.actions[:start].replace(Vagrant::Action::VM::NFS, NFSSkipIfClientNode)
-Vagrant.actions[:start].replace(Vagrant::Action::VM::ShareFolders, ShareFoldersSkipIfClientNode)
-Vagrant.actions[:start].replace(Vagrant::Action::VM::HostName, HostNameSkipIfClientNode)
 Vagrant.actions[:start].replace(Vagrant::Action::VM::Boot, BootWithNoSSH)
 
 Vagrant::Config.run do |config|
