@@ -77,6 +77,7 @@ and run it from the Vagrant-provided mount:
 
 ```sh
 $ vagrant ssh razor
+$ sudo su - root
 $ /vagrant/contrib/razor_for_bare_ubuntu.sh
 ```
 
