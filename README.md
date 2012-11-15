@@ -9,6 +9,10 @@ Download and install the following on your workstation:
    PXE booting support)
 3. [Vagrant][vagrant_site] (package install is suggested)
 
+**Note:** please ensure that VirtualBox's DHCP server is not running,
+otherwise the razor client nodes may recieve IP address in the
+`192.168.0.0.` range.
+
 Now clone this project repo to your workstation.
 
 All you should have to type in the project directory is:
