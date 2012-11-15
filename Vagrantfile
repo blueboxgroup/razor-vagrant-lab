@@ -113,7 +113,8 @@ Vagrant::Config.run do |config|
   # create some razor client nodes
   razor_nodes.to_i.times do |i|
     config.vm.define :"node#{i+1}" do |vm_config|
-      vm_config.vm.box        = "blank-amd64"
+      vm_config.vm.box      = "blank-amd64"
+      vm_config.vm.box_url  = "https://s3.amazonaws.com/fnichol/vagrant-base-boxes/blank-amd64-20121109.box"
 
       unless ENV['NO_GUI']
         vm_config.vm.boot_mode = 'gui'
