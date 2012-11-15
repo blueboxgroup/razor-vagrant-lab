@@ -63,6 +63,26 @@ VM, run `vagrant status NAME`.
 $ vagrant up
 ```
 
+## Creating A Sample Razor Configuration
+
+To see Razor in action, several "slices" have to be set up in order to execute
+a [policy][policy_wiki] on a [node][node_wiki]. A quickstart example has
+been provided which will set up all nodes to install Ubuntu 12.04 LTS
+(currently with no broker). To run the script, login to the **razor** node
+and run it from the Vagrant-provided mount:
+
+```sh
+$ vagrant ssh razor
+$ /vagrant/contrib/razor_for_bare_ubuntu.sh
+```
+
+For a list of configuration overrides (such as the ISO download URL), please
+run:
+
+```sh
+$ /vagrant/contrib/razor_for_bare_ubuntu.sh help
+```
+
 ## Vagrant Base Boxes
 
 The base boxes were built with the [VeeWee][veewee_site] gem. The Razor
@@ -101,6 +121,8 @@ limitations under the License.
 
 [bento_site]:   https://github.com/opscode/bento
 [opscode_site]: http://www.opscode.com/
+[node_wiki]:    https://github.com/puppetlabs/Razor/wiki/node
+[policy_wiki]:  https://github.com/puppetlabs/Razor/wiki/policy
 [vb_site]:      https://www.virtualbox.org/wiki/Downloads
 [veewee_site]:  https://github.com/jedi4ever/veewee
 [vagrant_site]: http://vagrantup.com/
