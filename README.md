@@ -63,6 +63,15 @@ VM, run `vagrant status NAME`.
 $ vagrant up
 ```
 
+## Vagrant Base Boxes
+
+The base boxes were built with the [VeeWee][veewee_site] gem. The Razor
+node is using an [Opscode][opscode_site] provided Ubuntu 12.04 base box,
+built from VeeWee definitions in a project called [Bento][bento_site]. To
+simulate unprovisioned bare metal instances, a special base box called
+**blank-amd64** was created and was built from VeeWee definitions in a
+project called [veewee-definitions][vwd_site].
+
 ## Development
 
 * Source hosted at [GitHub][repo]
@@ -90,8 +99,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
+[bento_site]:   https://github.com/opscode/bento
+[opscode_site]: http://www.opscode.com/
 [vb_site]:      https://www.virtualbox.org/wiki/Downloads
+[veewee_site]:  https://github.com/jedi4ever/veewee
 [vagrant_site]: http://vagrantup.com/
+[vwd_site]:     https://github.com/fnichol/veewee-definitions
 
 [fnichol]:      https://github.com/fnichol
 [repo]:         http://bluebox.net
