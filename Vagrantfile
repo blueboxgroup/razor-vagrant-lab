@@ -119,6 +119,9 @@ Vagrant::Config.run do |config|
         vm_config.vm.boot_mode = 'gui'
       end
 
+      # generate a new mac address for each node, to make them unique
+      vm_config.vm.customize ["modifyvm", :id, "--macaddress1", "auto"]
+
       # put primary network interface into hostonly network segement
       vm_config.vm.customize ["modifyvm", :id, "--nic1", "hostonly"]
       vm_config.vm.customize ["modifyvm", :id, "--hostonlyadapter1", "vboxnet0"]
