@@ -81,6 +81,7 @@ end
 Vagrant.actions[:start].replace(Vagrant::Action::VM::Boot, BootWithNoSSH)
 
 Vagrant::Config.run do |config|
+  # razor node and router/dhcp server
   config.vm.define :razor do |vm_config|
     vm_config.vm.box      = "opscode-ubuntu-12.04"
     vm_config.vm.box_url  = oc_box_url(vm_config.vm.box)
@@ -128,8 +129,25 @@ Vagrant::Config.run do |config|
       ]
 
       chef.json = {
+        :puppet => {
+          :master_conf => {
+            :master => {
+              :autosign => 'true'
+            }
+          }
+        }
       }
     end
+
+    # set up all puppet nodes to be an apache web server
+    vm_config.vm.provision :shell, :inline => <<-PREPARE_MASTER.gsub(/^ {6}/, '')
+      puppet module install puppetlabs-apache
+      cat <<SITE_PP > /etc/puppet/manifests/site.pp
+      node default {
+        class { 'apache': }
+      }
+      SITE_PP
+    PREPARE_MASTER
   end
 
   # create some razor client nodes
