@@ -84,7 +84,7 @@ Vagrant::Config.run do |config|
     vm_config.vm.host_name = "razor.vagrantup.com"
     vm_config.vm.network :hostonly, razor_ip
 
-    config.vm.provision :chef_solo do |chef|
+    vm_config.vm.provision :chef_solo do |chef|
       chef.data_bags_path = "data_bags"
 
       chef.run_list = [
