@@ -9,3 +9,6 @@ cookbook 'dhcp',        :git => 'git://github.com/fnichol/dhcp-cookbook.git',
 
 # become a router/gateway for razor nodes
 cookbook 'router',      :path => './cookbooks-internal/router'
+
+# i heard you liked puppet
+cookbook 'puppet'

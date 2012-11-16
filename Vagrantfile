@@ -11,6 +11,10 @@ def razor_ip
   "172.16.33.11"
 end
 
+def puppetmaster_ip
+  "172.16.33.31"
+end
+
 def mk_type
   ENV["MK_TYPE"] || "prod"
 end
@@ -106,6 +110,24 @@ Vagrant::Config.run do |config|
             }
           }
         }
+      }
+    end
+  end
+
+  # puppetmaster for the razor puppet broker
+  config.vm.define :puppetmaster do |vm_config|
+    vm_config.vm.box      = "opscode-ubuntu-12.04"
+    vm_config.vm.box_url  = oc_box_url(vm_config.vm.box)
+
+    vm_config.vm.host_name = "puppetmaster.vagrantup.com"
+    vm_config.vm.network :hostonly, puppetmaster_ip
+
+    vm_config.vm.provision :chef_solo do |chef|
+      chef.run_list = [
+        "recipe[puppet::master]"
+      ]
+
+      chef.json = {
       }
     end
   end
