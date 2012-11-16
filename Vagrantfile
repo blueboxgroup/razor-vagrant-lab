@@ -11,6 +11,10 @@ def razor_ip
   "172.16.33.11"
 end
 
+def puppetmaster_ip
+  "172.16.33.31"
+end
+
 def mk_type
   ENV["MK_TYPE"] || "prod"
 end
@@ -77,6 +81,7 @@ end
 Vagrant.actions[:start].replace(Vagrant::Action::VM::Boot, BootWithNoSSH)
 
 Vagrant::Config.run do |config|
+  # razor node and router/dhcp server
   config.vm.define :razor do |vm_config|
     vm_config.vm.box      = "opscode-ubuntu-12.04"
     vm_config.vm.box_url  = oc_box_url(vm_config.vm.box)
@@ -108,6 +113,41 @@ Vagrant::Config.run do |config|
         }
       }
     end
+  end
+
+  # puppetmaster for the razor puppet broker
+  config.vm.define :puppetmaster do |vm_config|
+    vm_config.vm.box      = "opscode-ubuntu-12.04"
+    vm_config.vm.box_url  = oc_box_url(vm_config.vm.box)
+
+    vm_config.vm.host_name = "puppetmaster.vagrantup.com"
+    vm_config.vm.network :hostonly, puppetmaster_ip
+
+    vm_config.vm.provision :chef_solo do |chef|
+      chef.run_list = [
+        "recipe[puppet::master]"
+      ]
+
+      chef.json = {
+        :puppet => {
+          :master_conf => {
+            :master => {
+              :autosign => 'true'
+            }
+          }
+        }
+      }
+    end
+
+    # set up all puppet nodes to be an apache web server
+    vm_config.vm.provision :shell, :inline => <<-PREPARE_MASTER.gsub(/^ {6}/, '')
+      puppet module install puppetlabs-apache
+      cat <<SITE_PP > /etc/puppet/manifests/site.pp
+      node default {
+        class { 'apache': }
+      }
+      SITE_PP
+    PREPARE_MASTER
   end
 
   # create some razor client nodes
