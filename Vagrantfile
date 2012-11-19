@@ -20,7 +20,7 @@ def mk_type
 end
 
 def mk_version
-  ENV["MK_VERSION"] || "0.9.2.1"
+  ENV["MK_VERSION"] || "0.9.3.0"
 end
 
 def mk_url_prefix
