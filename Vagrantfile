@@ -116,7 +116,7 @@ Vagrant::Config.run do |config|
   end
 
   # puppetmaster for the razor puppet broker
-  config.vm.define :puppetmaster do |vm_config|
+  config.vm.define :puppet do |vm_config|
     vm_config.vm.box      = "opscode-ubuntu-12.04"
     vm_config.vm.box_url  = oc_box_url(vm_config.vm.box)
 
