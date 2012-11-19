@@ -9,8 +9,8 @@
         "max-lease-time": "604800"
     },
     "options": {
-        "domain-name-servers": "8.8.8.8",
-        "domain-name": "\"razornet\"",
+        "domain-name-servers": "172.16.33.11",
+        "domain-name": "\"razornet.local\"",
         "subnet-mask": "255.255.255.0",
         "broadcast-address": "172.16.33.255",
         "routers": "172.16.33.11"

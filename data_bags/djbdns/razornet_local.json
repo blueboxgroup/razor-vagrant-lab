@@ -1,0 +1,13 @@
+{
+  "id": "razornet_local",
+  "domain": "razornet.local",
+  "ns": [
+    { "razornet.local": "172.16.33.11" }
+  ],
+  "alias": [
+  ],
+  "host": [
+    { "razor.razornet.local": "172.16.33.11" },
+    { "puppet.razornet.local": "172.16.33.31" }
+  ]
+}

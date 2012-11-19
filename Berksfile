@@ -12,3 +12,5 @@ cookbook 'router',      :path => './cookbooks-internal/router'
 
 # i heard you liked puppet
 cookbook 'puppet'
+
+cookbook 'djbdns'

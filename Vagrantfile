@@ -86,7 +86,7 @@ Vagrant::Config.run do |config|
     vm_config.vm.box      = "opscode-ubuntu-12.04"
     vm_config.vm.box_url  = oc_box_url(vm_config.vm.box)
 
-    vm_config.vm.host_name = "razor.vagrantup.com"
+    vm_config.vm.host_name = "razor.razornet.local"
     vm_config.vm.network :hostonly, razor_ip
 
     vm_config.vm.provision :chef_solo do |chef|
@@ -95,12 +95,20 @@ Vagrant::Config.run do |config|
       chef.run_list = [
         "recipe[router]",
         "recipe[dhcp]",
+        "recipe[djbdns::internal_server]",
+        "recipe[djbdns::cache]",
         "recipe[razor]"
       ]
 
       chef.json = {
         :dhcp => {
           :interfaces => [ "eth1" ]
+        },
+        :djbdns => {
+          :domain => 'razornet.local',
+          :public_dnscache_ipaddress => razor_ip,
+          :public_dnscache_allowed_networks => [ "172.16.33" ],
+          :tinydns_internal_resolved_domain => 'razornet.local'
         },
         :razor => {
           :bind_address => razor_ip,
@@ -120,7 +128,7 @@ Vagrant::Config.run do |config|
     vm_config.vm.box      = "opscode-ubuntu-12.04"
     vm_config.vm.box_url  = oc_box_url(vm_config.vm.box)
 
-    vm_config.vm.host_name = "puppetmaster.vagrantup.com"
+    vm_config.vm.host_name = "puppet.razornet.local"
     vm_config.vm.network :hostonly, puppetmaster_ip
 
     vm_config.vm.provision :chef_solo do |chef|
