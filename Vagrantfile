@@ -120,7 +120,7 @@ Vagrant::Config.run do |config|
           },
           :app => {
             :git_url => 'git://github.com/fnichol/Razor.git',
-            :git_rev => 'feature/master/chef-client-broker'
+            :git_rev => 'feature/master/broker-plugin-api'
           }
         }
       }
