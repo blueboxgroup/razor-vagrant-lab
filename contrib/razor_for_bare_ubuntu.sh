@@ -4,7 +4,6 @@ set -e
 
 default_precise_iso_url="http://ubuntu-cd.mirror.iweb.ca/precise/ubuntu-12.04.1-server-amd64.iso"
 default_policy_tags="virtualbox_vm"
-default_razor_uri="http://172.16.33.11:8026"
 
 iso_cache_dir=/opt/razor/image/cache
 
@@ -19,8 +18,6 @@ Options
   --iso-url|-u <url>      - The URL to download Ubuntu ISO, defaults to
                             '$default_precise_iso_url'
   --policy-tags|-t <tags> - Razor policy tags, defaults to 'virtualbox_vm'
-  --razor-uri             - URI to local Razor API server, defaults to
-                            '$default_razor_uri'
 
 Action
 
@@ -45,13 +42,22 @@ razor_image_uuid() {
   '
 }
 
-# OMGWTFBBQ, this should **not** be required
 razor_model_uuid() {
-  curl -s "$razor_uri/razor/api/model" \
+  razor -w model \
     | NAME="$1" ruby -rjson -e '
       j = JSON.parse(STDIN.read);
       puts j["response"].
         select { |m| m["@label"] == ENV["NAME"] }.
+        first["@uuid"]
+    '
+}
+
+razor_broker_uuid() {
+  razor -w broker \
+    | NAME="$1" ruby -rjson -e '
+      j = JSON.parse(STDIN.read);
+      puts j["response"].
+        select { |b| b["@name"] == ENV["NAME"] }.
         first["@uuid"]
     '
 }
@@ -89,7 +95,19 @@ add_model() {
     --label precise64
 }
 
-add_policy() {
+add_bare_broker() {
+  log "[Razor] adding no brokers"
+}
+
+add_chef_broker() {
+  log "[Razor] broker add chef"
+  razor broker add \
+    --plugin chef \
+    --name lab_chef \
+    --description "Sample Chef broker"
+}
+
+add_bare_policy() {
   log "[Razor] policy add ubuntu_bare"
   razor policy add \
     --template linux_deploy \
@@ -99,9 +117,21 @@ add_policy() {
     --label ubuntu_bare
 }
 
+add_chef_policy() {
+  log "[Razor] policy add ubuntu_bare"
+  razor policy add \
+    --template linux_deploy \
+    --model-uuid $(razor_model_uuid precise64) \
+    --tags "$policy_tags" \
+    --enabled true \
+    --label ubuntu_chef \
+    --broker-uuid $(razor_broker_uuid lab_chef)
+}
+
 finished() {
   log "Finished, client nodes should pick up policy shortly"
 }
+
 
 # Parse CLI arguments
 while [[ $# -gt 0 ]] ; do
@@ -114,10 +144,6 @@ while [[ $# -gt 0 ]] ; do
 
     --policy-tags|-t)
       policy_tags="$1" ; shift
-      ;;
-
-    --razor-uri)
-      razor_uri="$1" ; shift
       ;;
 
     help|usage)
@@ -139,15 +165,14 @@ fi
 if [ -z "$policy_tags" ] ; then
   policy_tags="$default_policy_tags"
 fi
-if [ -z "$razor_uri" ] ; then
-  razor_uri="$default_razor_uri"
-fi
 
 precise_iso="$iso_cache_dir/${precise_iso_url##http*/}"
+variant="$(echo $(basename $0) | awk -F'_' '{print $3}')"
 
 install_curl
 download_iso
 add_image
 add_model
-add_policy
+add_${variant}_broker
+add_${variant}_policy
 finished
