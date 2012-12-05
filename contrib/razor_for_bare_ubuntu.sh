@@ -3,9 +3,12 @@
 set -e
 
 default_precise_iso_url="http://ubuntu-cd.mirror.iweb.ca/precise/ubuntu-12.04.1-server-amd64.iso"
-default_policy_tags="virtualbox_vm"
+default_policy_tag="virtualbox_vm"
+default_role_tag='role[web_server]'
 
 iso_cache_dir=/opt/razor/image/cache
+
+variant="$(echo $(basename $0) | awk -F'_' '{print $3}')"
 
 usage() {
   printf "
@@ -17,7 +20,8 @@ Options
 
   --iso-url|-u <url>      - The URL to download Ubuntu ISO, defaults to
                             '$default_precise_iso_url'
-  --policy-tags|-t <tags> - Razor policy tags, defaults to 'virtualbox_vm'
+  --policy-tag|-t <tags>  - Razor policy tags, defaults to '$default_policy_tag'
+                            and to '$default_role_tag' for chef setups
 
 Action
 
@@ -48,6 +52,16 @@ razor_model_uuid() {
       j = JSON.parse(STDIN.read);
       puts j["response"].
         select { |m| m["@label"] == ENV["NAME"] }.
+        first["@uuid"]
+    '
+}
+
+razor_tag_uuid() {
+  razor -w tag \
+    | NAME="$1" ruby -rjson -e '
+      j = JSON.parse(STDIN.read);
+      puts j["response"].
+        select { |b| b["@name"] == ENV["NAME"] }.
         first["@uuid"]
     '
 }
@@ -95,6 +109,22 @@ add_model() {
     --label precise64
 }
 
+add_bare_tag() {
+  log "[Razor] adding no tags"
+}
+
+add_chef_tag() {
+  log "[Razor] tag add $policy_tag"
+  razor tag add \
+    --name "$policy_tag" \
+    --tag "$policy_tag"
+
+  razor tag $(razor_tag_uuid "$policy_tag") matcher add \
+    --key productname \
+    --compare equal \
+    --value VirtualBox
+}
+
 add_bare_broker() {
   log "[Razor] adding no brokers"
 }
@@ -112,7 +142,7 @@ add_bare_policy() {
   razor policy add \
     --template linux_deploy \
     --model-uuid $(razor_model_uuid precise64) \
-    --tags "$policy_tags" \
+    --tags "$policy_tag" \
     --enabled true \
     --label ubuntu_bare
 }
@@ -122,7 +152,7 @@ add_chef_policy() {
   razor policy add \
     --template linux_deploy \
     --model-uuid $(razor_model_uuid precise64) \
-    --tags "$policy_tags" \
+    --tags "$policy_tag" \
     --enabled true \
     --label ubuntu_chef \
     --broker-uuid $(razor_broker_uuid lab_chef)
@@ -142,8 +172,8 @@ while [[ $# -gt 0 ]] ; do
       precise_iso_url="$1" ; shift
       ;;
 
-    --policy-tags|-t)
-      policy_tags="$1" ; shift
+    --policy-tag|-t)
+      policy_tag="$1" ; shift
       ;;
 
     help|usage)
@@ -162,17 +192,21 @@ done
 if [ -z "$precise_iso_url" ] ; then
   precise_iso_url="$default_precise_iso_url"
 fi
-if [ -z "$policy_tags" ] ; then
-  policy_tags="$default_policy_tags"
+if [ -z "$policy_tag" ] ; then
+  if [ "$variant" == "chef" ] ; then
+    policy_tag="$default_role_tag"
+  else
+    policy_tag="$default_policy_tag"
+  fi
 fi
 
 precise_iso="$iso_cache_dir/${precise_iso_url##http*/}"
-variant="$(echo $(basename $0) | awk -F'_' '{print $3}')"
 
 install_curl
 download_iso
 add_image
 add_model
+add_${variant}_tag
 add_${variant}_broker
 add_${variant}_policy
 finished
