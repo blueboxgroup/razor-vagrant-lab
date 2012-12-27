@@ -1,9 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'berkshelf', '~> 1.0.0'
+gem 'berkshelf'
 
 # love it
 gem 'pry'
-
-# bootstrap a chef server
-gem 'knife-server'
