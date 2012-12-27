@@ -1,4 +1,4 @@
-cookbook 'razor', :git => 'git@github.blueboxgrid.com:fnichol/chef-razor.git', :ref => 'v0.2.2'
+cookbook 'razor', :locked_version => '0.3.2'
 cookbook 'dhcp', :git => 'git://github.com/fnichol/dhcp-cookbook.git', :ref => 'craigtracey-with-upstart'
 cookbook 'router', :path => './cookbooks-internal/router'
 cookbook 'puppet', :locked_version => '0.2.0'

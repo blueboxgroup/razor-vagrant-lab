@@ -1,7 +1,6 @@
 site :opscode
 
-cookbook 'razor',       :git => 'git@github.blueboxgrid.com:fnichol/chef-razor.git',
-                        :branch => 'v0.2.2'
+cookbook 'razor'
 
 # service dhcp requests
 cookbook 'dhcp',        :git => 'git://github.com/fnichol/dhcp-cookbook.git',
