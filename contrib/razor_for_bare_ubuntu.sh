@@ -2,7 +2,7 @@
 
 set -e
 
-default_precise_iso_url="http://ubuntu-cd.mirror.iweb.ca/precise/ubuntu-12.04.1-server-amd64.iso"
+default_precise_iso_url="http://releases.ubuntu.com/precise/ubuntu-12.04.1-server-amd64.iso"
 default_policy_tag="virtualbox_vm"
 default_role_tag='role__web_server'
 
