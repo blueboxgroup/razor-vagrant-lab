@@ -117,10 +117,6 @@ Vagrant::Config.run do |config|
               'type' => 'mk',
               'url' => "#{mk_url_prefix}/rz_mk_#{mk_type}-image.#{mk_version}.iso"
             }
-          },
-          :app => {
-            :git_url => 'git://github.com/fnichol/Razor.git',
-            :git_rev => 'feature/master/broker-plugin-api'
           }
         }
       }
