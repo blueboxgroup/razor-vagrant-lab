@@ -23,13 +23,75 @@ $ ./script/bootstrap
 
 Follow any directions given and possibly re-run the bootstrap script.
 
-## Starting The Razor Node
+## Usage
+
+### Starting The Razor Node
 
 ```sh
 $ vagrant up razor
 ```
 
-## Starting A Razor Client Node
+### Setting Up A Sample Razor Configuration
+
+To see Razor in action, several "slices" have to be set up in order to execute
+a [policy][policy_wiki] on a [node][node_wiki]. Several quickstart examples
+have been provided which will set up all nodes to install Ubuntu 12.04 LTS.
+To run the script, login to the **razor** node and become the root user:
+
+```sh
+$ vagrant ssh razor
+$ sudo su - root
+```
+
+#### Chef Broker Configuration
+
+This will set up a Chef broker to run after nodes are provisioned. Run it
+from the Vagrant-provided mount:
+
+```sh
+$ /vagrant/contrib/razor_for_chef_ubuntu.sh
+```
+
+For a list of configuration overrides (such as the ISO download URL), please
+run:
+
+```sh
+$ /vagrant/contrib/razor_for_chef_ubuntu.sh help
+```
+
+#### Puppet Broker Configuration
+
+This will set up a Puppet broker to run after nodes are provisioned. Run it
+from the Vagrant-provided mount:
+
+```sh
+$ /vagrant/contrib/razor_for_puppet_ubuntu.sh
+```
+
+For a list of configuration overrides (such as the ISO download URL), please
+run:
+
+```sh
+$ /vagrant/contrib/razor_for_puppet_ubuntu.sh help
+```
+
+#### Brokerless Configuration
+
+This will set up a basic setup with no brokers running. Run it from the
+Vagrant-provided mount:
+
+```sh
+$ /vagrant/contrib/razor_for_bare_ubuntu.sh
+```
+
+For a list of configuration overrides (such as the ISO download URL), please
+run:
+
+```sh
+$ /vagrant/contrib/razor_for_bare_ubuntu.sh help
+```
+
+### Starting A Razor Client Node
 
 ```sh
 $ vagrant up node1
@@ -45,6 +107,7 @@ $ vagrant status
 Current VM states:
 
 razor                    running
+puppet                   not_created
 node1                    not created
 node2                    not created
 node3                    not created
@@ -61,31 +124,10 @@ above with their current state. For more information about a specific
 VM, run `vagrant status NAME`.
 ```
 
-## Starting The Entire Cluster
+### Starting The Entire Cluster
 
 ```sh
 $ vagrant up
-```
-
-## Creating A Sample Razor Configuration
-
-To see Razor in action, several "slices" have to be set up in order to execute
-a [policy][policy_wiki] on a [node][node_wiki]. A quickstart example has
-been provided which will set up all nodes to install Ubuntu 12.04 LTS
-(currently with no broker). To run the script, login to the **razor** node
-and run it from the Vagrant-provided mount:
-
-```sh
-$ vagrant ssh razor
-$ sudo su - root
-$ /vagrant/contrib/razor_for_bare_ubuntu.sh
-```
-
-For a list of configuration overrides (such as the ISO download URL), please
-run:
-
-```sh
-$ /vagrant/contrib/razor_for_bare_ubuntu.sh help
 ```
 
 ## Vagrant Base Boxes
@@ -134,5 +176,5 @@ limitations under the License.
 [vwd_site]:     https://github.com/fnichol/veewee-definitions
 
 [fnichol]:      https://github.com/fnichol
-[repo]:         http://bluebox.net
-[issues]:       http://bluebox.net
+[repo]:         https://github.com/blueboxgroup/razor-vagrant-lab
+[issues]:       https://github.com/blueboxgroup/razor-vagrant-lab/issues
