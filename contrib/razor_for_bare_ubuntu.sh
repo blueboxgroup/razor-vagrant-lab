@@ -125,6 +125,10 @@ add_chef_tag() {
     --value VirtualBox
 }
 
+add_puppet_tag() {
+  log "[Razor] adding no tags"
+}
+
 add_bare_broker() {
   log "[Razor] adding no brokers"
 }
@@ -135,6 +139,14 @@ add_chef_broker() {
     --plugin chef \
     --name lab_chef \
     --description "Sample Chef broker"
+}
+
+add_puppet_broker() {
+  log "[Razor] broker add puppet"
+  razor broker add \
+    --plugin puppet \
+    --name lab_puppet \
+    --description "Sample Puppet broker"
 }
 
 add_bare_policy() {
@@ -156,6 +168,17 @@ add_chef_policy() {
     --enabled true \
     --label ubuntu_chef \
     --broker-uuid $(razor_broker_uuid lab_chef)
+}
+
+add_puppet_policy() {
+  log "[Razor] policy add ubuntu_bare"
+  razor policy add \
+    --template linux_deploy \
+    --model-uuid $(razor_model_uuid precise64) \
+    --tags "$policy_tag" \
+    --enabled true \
+    --label ubuntu_puppet \
+    --broker-uuid $(razor_broker_uuid lab_puppet)
 }
 
 finished() {
