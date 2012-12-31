@@ -132,12 +132,12 @@ $ vagrant up
 
 ## Vagrant Base Boxes
 
-The base boxes were built with the [VeeWee][veewee_site] gem. The Razor
-node is using an [Opscode][opscode_site] provided Ubuntu 12.04 base box,
-built from VeeWee definitions in a project called [Bento][bento_site]. To
+The base boxes were built with the [VeeWee][veewee_site] gem. The Razor and
+Puppet nodes are using an [Opscode][opscode_site] provided Ubuntu 12.04 base
+box, built from VeeWee definitions in a project called [Bento][bento_site]. To
 simulate unprovisioned bare metal instances, a special base box called
-**blank-amd64** was created and was built from VeeWee definitions in a
-project called [veewee-definitions][vwd_site].
+[**blank-amd64**][blank_amd64] was created and was built from VeeWee
+definitions in a project called [veewee-definitions][vwd_site].
 
 ## Development
 
@@ -167,6 +167,7 @@ limitations under the License.
 
 
 [bento_site]:   https://github.com/opscode/bento
+[blank_amd64]:  https://github.com/fnichol/veewee-definitions/blob/master/definitions/blank-amd64/definition.rb
 [opscode_site]: http://www.opscode.com/
 [node_wiki]:    https://github.com/puppetlabs/Razor/wiki/node
 [policy_wiki]:  https://github.com/puppetlabs/Razor/wiki/policy
