@@ -8,19 +8,18 @@ warn()    { printf -- ">>>>>> $*\n"; }
 fail()    { printf -- "\nERROR: $*\n" ; exit 1 ; }
 
 if ! command -v direnv >/dev/null ; then
-  warn "the direnv command is not installed and helps in using"
+  warn "The direnv command is not installed and helps in using"
   warn "this project."
   warn ""
-  warn "please visit https://github.com/zimbatm/direnv for more details."
+  warn "Please visit https://github.com/zimbatm/direnv for more details."
   warn ""
-  warn "if you are on a mac and using homebrew, install it with:"
+  warn "If you are on a mac and using homebrew, install it with:"
   warn ""
   warn "    $ brew install direnv"
   warn ""
-  warn "follow the post-install instructions, and re-run $0"
+  warn "Follow the post-install instructions, and re-run $0"
   warn "\n"
 fi
-
 
 if ! command -v bundle >/dev/null ; then
   banner "Installing bundler gem"
