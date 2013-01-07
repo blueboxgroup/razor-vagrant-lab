@@ -1,8 +1,7 @@
 # ignore bundler state and gems
 /.bundle/
 /vendor/bundle/
+/vendor/binstubs/
 
 # ignore vagrant state
 /.vagrant
-
-.rvmrc
