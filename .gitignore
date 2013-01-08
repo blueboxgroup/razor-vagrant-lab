@@ -5,3 +5,6 @@
 
 # ignore vagrant state
 /.vagrant
+
+# ignore tmp
+/tmp/

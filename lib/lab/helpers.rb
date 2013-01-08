@@ -12,6 +12,10 @@ module Lab
       "172.16.33.11"
     end
 
+    def chef_server_ip
+      "172.16.33.21"
+    end
+
     def puppetmaster_ip
       "172.16.33.31"
     end
@@ -31,6 +35,10 @@ module Lab
 
     def razor_nodes
       ENV["RAZOR_NODES"] || 3
+    end
+
+    def chef_host_cache_dir
+      File.join(File.dirname(__FILE__), %w{.. .. tmp chef_cache})
     end
   end
 end

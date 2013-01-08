@@ -8,6 +8,7 @@
   ],
   "host": [
     { "razor.razornet.local": "172.16.33.11" },
+    { "chef.razornet.local": "172.16.33.21" },
     { "puppet.razornet.local": "172.16.33.31" }
   ]
 }
