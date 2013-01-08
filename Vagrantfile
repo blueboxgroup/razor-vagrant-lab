@@ -108,42 +108,8 @@ def build_chef_node(config)
       }
     end
 
-    vm_config.vm.provision :shell, :inline => <<-POSTINSTALL.gsub(/^ {6}/, '')
-      banner()  { printf -- "-----> $*\n"; }
-
-      server_dir=/vagrant/tmp/chef_server
-
-      for bin in chef-client chef-solo knife ohai shef ; do
-        banner "Updating /usr/bin/$bin symlink"
-        ln -snf /opt/chef-server/bin/$bin /usr/bin/$bin
-      done ; unset bin
-
-      if [ -d "/opt/chef" ] ; then
-        banner "Remove pre-existing Omnibus installation"
-        rm -rf /opt/chef
-      fi
-
-      if [ ! -f "/root/.chef/knife.rb" ] ; then
-        banner "Creating Chef client key for root user"
-        /usr/bin/knife configure --initial \
-          --server-url http://127.0.0.1:8000 \
-          --user root \
-          --repository "" \
-          --admin-client-name chef-webui \
-          --admin-client-key /etc/chef-server/chef-webui.pem \
-          --validation-client-name chef-validator \
-          --validation-key /etc/chef-server/chef-validator.pem \
-          --defaults --yes
-      fi
-
-      if [ ! -d "$server_dir" ] ; then
-        banner "Creating $server_dir directory"
-        mkdir -p $server_dir
-      fi
-
-      banner "Coping chef-validator.pem into tmp/chef_server/"
-      cp -f /etc/chef-server/chef-validator.pem $server_dir/
-    POSTINSTALL
+    # set up chef server with cookbooks and a web_server role
+    vm_config.vm.provision :shell, :inline => postinstall_script(:chef)
   end
 end
 
@@ -173,19 +139,7 @@ def build_puppet_node(config)
     end
 
     # set up all puppet nodes to be an apache web server
-    vm_config.vm.provision :shell, :inline => <<-PREPARE_MASTER.gsub(/^ {6}/, '')
-      if ! puppet module list | grep -q puppetlabs-apache >/dev/null ; then
-        puppet module install puppetlabs-apache
-      fi
-
-      if [ ! -f /etc/puppet/manifests/site.pp ] ; then
-        cat <<SITE_PP > /etc/puppet/manifests/site.pp
-      node default {
-        class { 'apache': }
-      }
-      SITE_PP
-      fi
-    PREPARE_MASTER
+    vm_config.vm.provision :shell, :inline => postinstall_script(:puppet)
   end
 end
 

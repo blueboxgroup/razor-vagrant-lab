@@ -40,5 +40,10 @@ module Lab
     def chef_host_cache_dir
       File.join(File.dirname(__FILE__), %w{.. .. tmp chef_cache})
     end
+
+    def postinstall_script(which)
+      IO.read(File.join(File.dirname(__FILE__),
+        %W{.. .. contrib #{which}_postinstall_script.sh}))
+    end
   end
 end

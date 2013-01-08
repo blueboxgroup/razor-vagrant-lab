@@ -30,7 +30,11 @@ Action
 "
 }
 
-log() { printf -- "-----> $*\n" ; return $? ; }
+banner()  { printf -- "-----> $*\n" ; }
+log()     { printf -- "       $*\n" ; }
+warn()    { printf -- ">>>>>> $*\n" ; }
+
+trap 'warn "Bailing out"' SIGTERM
 
 # OMGWTFBBQ, this should **not** be required
 razor_image_uuid() {
@@ -77,7 +81,7 @@ razor_broker_uuid() {
 }
 
 install_curl() {
-  log "Installing curl for API calls"
+  banner "Installing curl for API calls"
   apt-get -y install curl
 }
 
@@ -85,15 +89,15 @@ download_iso() {
   mkdir -p $iso_cache_dir
 
   if [ ! -f "$precise_iso" ] ; then
-    log "Downloading ISO from $precise_iso_url"
+    banner "Downloading ISO from $precise_iso_url"
     curl -L $precise_iso_url -o $precise_iso
   else
-    log "ISO $precise_iso already downloaded, skipping"
+    banner "ISO $precise_iso already downloaded, skipping"
   fi
 }
 
 add_image() {
-  log "[Razor] image add ubuntu-amd64/12.04"
+  banner "[Razor] image add ubuntu-amd64/12.04"
   razor image add \
     --type os \
     --path $precise_iso \
@@ -102,7 +106,14 @@ add_image() {
 }
 
 add_model() {
-  log "[Razor] model add precise64"
+  printf -- "\n\n\n"
+  banner "[Cheat Sheet] Answers to Model questions"
+  log "1. 'node hostname prefix': web"
+  log "2. 'local domain name':    razornet.local"
+  log "3. 'root password':        test1234"
+  printf -- "\n\n\n"
+
+  banner "[Razor] model add precise64"
   razor model add \
     --template ubuntu_precise \
     --image-uuid $(razor_image_uuid ubuntu-amd64 12.04) \
@@ -110,11 +121,11 @@ add_model() {
 }
 
 add_bare_tag() {
-  log "[Razor] adding no tags"
+  banner "[Razor] adding no tags"
 }
 
 add_chef_tag() {
-  log "[Razor] tag add $policy_tag"
+  banner "[Razor] tag add $policy_tag"
   razor tag add \
     --name "$policy_tag" \
     --tag "$policy_tag"
@@ -126,15 +137,40 @@ add_chef_tag() {
 }
 
 add_puppet_tag() {
-  log "[Razor] adding no tags"
+  banner "[Razor] adding no tags"
 }
 
 add_bare_broker() {
-  log "[Razor] adding no brokers"
+  banner "[Razor] adding no brokers"
 }
 
 add_chef_broker() {
-  log "[Razor] broker add chef"
+  if [ ! -f "/vagrant/tmp/chef_server/chef-validator.pem" ] ; then
+    warn "Could not find the chef-validator.pem key file."
+    warn ""
+    warn "  * If you are using your own Chef Server, please disregard."
+    warn "  * If you want to use the provided Vagrant Chef Server, please"
+    warn "    quit and run 'vagrant up chef' on your workstation.\n"
+  fi
+
+  printf -- "\n\n\n"
+  banner "[Cheat Sheet] Answers to Chef Broker questions"
+  log "1. 'the URL for the Chef server':  http://chef.razornet.local:8000"
+  log "2. 'the Chef version':             10.16.4"
+  log "3. 'contents of validation.pem':"
+  if [ -f "/vagrant/tmp/chef_server/chef-validator.pem" ] ; then
+    cat "/vagrant/tmp/chef_server/chef-validator.pem"
+  else
+    printf -- 'UNKNOWN??\n'
+  fi
+  log "4. 'the validation client name':   chef-validator"
+  log "5. 'the Chef environment':         _default"
+  log "6. 'the Omnibus installer URL':    http://opscode.com/chef/install.sh"
+  log "7. 'path to chef-client binary':   chef-client"
+  log "8. 'optional run_list':            <SKIP>"
+  printf -- "\n\n\n"
+
+  banner "[Razor] broker add chef"
   razor broker add \
     --plugin chef \
     --name lab_chef \
@@ -142,7 +178,7 @@ add_chef_broker() {
 }
 
 add_puppet_broker() {
-  log "[Razor] broker add puppet"
+  banner "[Razor] broker add puppet"
   razor broker add \
     --plugin puppet \
     --name lab_puppet \
@@ -150,7 +186,7 @@ add_puppet_broker() {
 }
 
 add_bare_policy() {
-  log "[Razor] policy add ubuntu_bare"
+  banner "[Razor] policy add ubuntu_bare"
   razor policy add \
     --template linux_deploy \
     --model-uuid $(razor_model_uuid precise64) \
@@ -160,7 +196,7 @@ add_bare_policy() {
 }
 
 add_chef_policy() {
-  log "[Razor] policy add ubuntu_bare"
+  banner "[Razor] policy add ubuntu_bare"
   razor policy add \
     --template linux_deploy \
     --model-uuid $(razor_model_uuid precise64) \
@@ -171,7 +207,7 @@ add_chef_policy() {
 }
 
 add_puppet_policy() {
-  log "[Razor] policy add ubuntu_bare"
+  banner "[Razor] policy add ubuntu_bare"
   razor policy add \
     --template linux_deploy \
     --model-uuid $(razor_model_uuid precise64) \
@@ -182,7 +218,7 @@ add_puppet_policy() {
 }
 
 finished() {
-  log "Finished, client nodes should pick up policy shortly"
+  banner "Finished, client nodes should pick up policy shortly"
 }
 
 
