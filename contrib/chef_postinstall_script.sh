@@ -29,6 +29,14 @@ if [ ! -f "/root/.chef/knife.rb" ] ; then
     --defaults --yes
 fi
 
+if [ ! -f "/etc/chef-server/.regenerated_validator" ] ; then
+  banner "Regenerating chef-validator client key"
+  $knife client delete chef-validator -y
+  $knife client create chef-validator --admin \
+    --file /etc/chef-server/chef-validator.pem --disable-editing
+  touch "/etc/chef-server/.regenerated_validator"
+fi
+
 if [ ! -d "$server_dir" ] ; then
   banner "Creating $server_dir directory"
   mkdir -p $server_dir

@@ -155,7 +155,7 @@ add_chef_broker() {
 
   printf -- "\n\n\n"
   banner "[Cheat Sheet] Answers to Chef Broker questions"
-  log "1. 'the URL for the Chef server':  http://chef.razornet.local:8000"
+  log "1. 'the URL for the Chef server':  https://chef.razornet.local"
   log "2. 'the Chef version':             10.16.4"
   log "3. 'contents of validation.pem':"
   if [ -f "/vagrant/tmp/chef_server/chef-validator.pem" ] ; then
