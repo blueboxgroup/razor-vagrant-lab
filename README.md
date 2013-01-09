@@ -31,6 +31,18 @@ Follow any directions given and possibly re-run the bootstrap script.
 $ vagrant up razor
 ```
 
+## Starting The Chef Server (Optional)
+
+```sh
+$ vagrant up chef
+```
+
+## Starting The Puppet Master Server (Optional)
+
+```sh
+$ vagrant up puppet
+```
+
 ### Setting Up A Sample Razor Configuration
 
 To see Razor in action, several "slices" have to be set up in order to execute
@@ -107,6 +119,7 @@ $ vagrant status
 Current VM states:
 
 razor                    running
+chef                     not_created
 puppet                   not_created
 node1                    not created
 node2                    not created
