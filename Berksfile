@@ -1,5 +1,8 @@
 site :opscode
 
+# let's do this right
+cookbook 'apt'
+
 cookbook 'razor'
 
 # service dhcp requests

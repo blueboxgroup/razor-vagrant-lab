@@ -20,6 +20,7 @@ def build_razor_node(config)
       chef.data_bags_path = "data_bags"
 
       chef.run_list = [
+        "recipe[apt]",
         "recipe[router]",
         "recipe[dhcp]",
         "recipe[djbdns::internal_server]",
@@ -97,6 +98,7 @@ def build_chef_node(config)
       chef.provisioning_path = "/tmp/chef-vagrant-cache"
 
       chef.run_list = [
+        "recipe[apt]",
         "recipe[chef-server::default]"
       ]
 
@@ -124,6 +126,7 @@ def build_puppet_node(config)
 
     vm_config.vm.provision :chef_solo do |chef|
       chef.run_list = [
+        "recipe[apt]",
         "recipe[puppet::master]"
       ]
 
