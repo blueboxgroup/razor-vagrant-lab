@@ -15,9 +15,9 @@ cookbook 'router',      :path => './cookbooks-internal/router'
 # i heard you liked puppet
 cookbook 'puppet'
 
-# chef too? let's party. pinned at 2.0.0 release
+# chef too? let's party. pinned at a post-2.0.0 release, with URL logging
 cookbook 'chef-server', :git => 'git://github.com/opscode-cookbooks/chef-server.git',
-                        :ref => '125e93b5f79284c2aad3c6548d0faead9a0533b2'
+                        :ref => '8f8d3558abe7b5e70cc45c940d7ef05dac96f233'
 
 cookbook 'djbdns'
 
