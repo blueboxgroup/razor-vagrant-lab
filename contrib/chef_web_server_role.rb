@@ -8,8 +8,11 @@ run_list(
 )
 
 override_attributes(
+  'apache' => {
+    'default_site_enabled' => true
+  },
   'chef_client' => {
     'server_url' => "http://chef.razornet.local",
     'validation_client_name' => "chef-validator"
-  }
+  },
 )
