@@ -104,8 +104,8 @@ def build_chef_node(config)
 
       chef.json = {
         'chef-server' => {
-          'package_file' => 'http://opscode-omnitruck-release.s3.amazonaws.com/ubuntu/12.04/x86_64/chef-server_11.0.0-alpha.1-1.ubuntu.12.04_amd64.deb',
-          'package_checksum' => 'd4054fc27e39d5c31c668f93acde95cd688df082782bbaa6e231b9896c3265b1'
+          'package_file' => 'http://opscode-omnitruck-release.s3.amazonaws.com/ubuntu/12.04/x86_64/chef-server_11.0.4-1.ubuntu.12.04_amd64.deb',
+          'package_checksum' => 'f3564ce57e36633c0d92017e6b17ea218c83e954ebfdcdb487eccb0b4c2e4932'
         }
       }
     end

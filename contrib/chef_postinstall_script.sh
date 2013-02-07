@@ -51,7 +51,7 @@ if ! grep -q ^cookbook_path /root/.chef/knife.rb >/dev/null ; then
     >> /root/.chef/knife.rb
 fi
 
-for ckbk in apache2 chef-client ; do
+for ckbk in apache2 cron chef-client ; do
   banner "Uploading $ckbk cookbook to Chef Server"
   $knife cookbook upload $ckbk
 done ; unset ckbk
