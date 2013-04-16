@@ -7,7 +7,7 @@ Download and install the following on your workstation:
 1. [VirtualBox][vb_site] (currently tested on version 4.2.4 on Mac)
 2. [VirtualBox Oracle VM VirtualBox Extension Pack][vb_site] (needed for
    PXE booting support)
-3. [Vagrant][vagrant_site] (package install is suggested)
+3. [Vagrant][vagrant_site] (package install, version 1.1.0 or higher)
 
 **Note:** please ensure that VirtualBox's DHCP server is not running,
 otherwise the razor client nodes may recieve IP address in the
