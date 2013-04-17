@@ -1,78 +1,64 @@
 # -*- encoding: utf-8 -*-
 
+MIDDLEWARES = [
+  Vagrant::Action::Builtin::Provision,
+  Vagrant::Action::Builtin::NFS,
+  VagrantPlugins::ProviderVirtualBox::Action::ShareFolders,
+  Vagrant::Action::Builtin::SetHostname,
+  VagrantPlugins::ProviderVirtualBox::Action::CheckGuestAdditions,
+  VagrantPlugins::ProviderVirtualBox::Action::Network
+].freeze
+
 module Lab
 
   module ClientNode
 
     def client_node?(env)
-      env["vm"].name.to_s =~ /^node\d+/
+      env[:machine].name.to_s =~ /^node\d+/
     end
   end
+end
 
-  module SkipIfClientNode
 
-    include ClientNode
+# patch the living heck out of existing middlewares since vagrant plugins
+# are relying action hooks by class name (i.e. subclassing will not work).
+#
+# NOTE: this is incredibly evil, brittle, not forwards compatible, but it
+# works. thanks ruby!
+MIDDLEWARES.each do |klass|
+  klass.class_eval do
+
+    include Lab::ClientNode
+
+    alias_method :original_call, :call
 
     def call(env)
       if client_node?(env)
         @env = env
         @app.call(env)
       else
-        super
-      end
-    end
-  end
-
-  # Short-circuit vagrant middlewares that are assuming a normal base box.
-  # For razor client nodes there is no need to prepare provisioners,
-  # nfs mounts, etc.
-
-  class ProvisionSkipIfClientNode < Vagrant::Action::VM::Provision
-
-    include SkipIfClientNode
-  end
-
-  class NFSSkipIfClientNode < Vagrant::Action::VM::NFS
-
-    include SkipIfClientNode
-  end
-
-  class ShareFoldersSkipIfClientNode < Vagrant::Action::VM::ShareFolders
-
-    include SkipIfClientNode
-  end
-
-  class HostNameSkipIfClientNode < Vagrant::Action::VM::HostName
-
-    include SkipIfClientNode
-  end
-
-  # Short-cicuit the Boot middleware to not wait for an SSH connection.
-  class BootWithNoSSH < Vagrant::Action::VM::Boot
-
-    include ClientNode
-
-    def call(env)
-      if client_node?(env)
-        @env = env
-        boot
-        @app.call(env)
-      else
-        super
+        original_call(env)
       end
     end
   end
 end
 
-# Wire in modified middlewares
+VagrantPlugins::ProviderVirtualBox::Action::Boot.class_eval do
 
-Vagrant.actions[:start].replace(
-  Vagrant::Action::VM::Boot, Lab::BootWithNoSSH)
-Vagrant.actions[:start].replace(
-  Vagrant::Action::VM::Provision, Lab::ProvisionSkipIfClientNode)
-Vagrant.actions[:start].replace(
-  Vagrant::Action::VM::NFS, Lab::NFSSkipIfClientNode)
-Vagrant.actions[:start].replace(
-  Vagrant::Action::VM::ShareFolders, Lab::ShareFoldersSkipIfClientNode)
-Vagrant.actions[:start].replace(
-  Vagrant::Action::VM::HostName, Lab::HostNameSkipIfClientNode)
+  include Lab::ClientNode
+
+  alias_method :original_call, :call
+
+  def call(env)
+    if client_node?(env)
+      @env = env
+      boot_mode = @env[:machine].provider_config.gui ? "gui" : "headless"
+      # Start up the VM and don't wait for it to boot.
+      env[:ui].info I18n.t("vagrant.actions.vm.boot.booting")
+      env[:machine].provider.driver.start(boot_mode)
+      @app.call(env)
+    else
+      original_call(env)
+    end
+  end
+end

@@ -4,6 +4,7 @@
 $:.unshift File.join(File.dirname(__FILE__), "lib")
 
 require 'lab/helpers'
+require 'lab/vagrant_middleware'
 
 # razor node and router/dhcp server
 def build_razor_node(config)
