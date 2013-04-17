@@ -23,7 +23,7 @@ def build_razor_node(config)
       chef.run_list = [
         "recipe[apt]",
         "recipe[router]",
-        "recipe[dhcp]",
+        "recipe[dhcp::server]",
         "recipe[djbdns::internal_server]",
         "recipe[djbdns::cache]",
         "recipe[razor]"
@@ -31,6 +31,14 @@ def build_razor_node(config)
 
       chef.json = {
         :dhcp => {
+          :networks => ["172-16-33-0_24"],
+          :options => {
+            'domain-name-servers' => "172.16.33.11",
+            'domain-name' => "\"razornet.local\""
+          },
+          :parameters => {
+            'next-server' => "172.16.33.11",
+          },
           :interfaces => [ "eth1" ]
         },
         :djbdns => {
