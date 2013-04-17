@@ -91,14 +91,9 @@ def build_chef_node(config)
       virtualbox.customize ["modifyvm", :id, "--memory", 1024]
     end
 
-    # create a cache directory outside the virtual machine to cache the large
-    # omnibus package across vm creates/destroys
-    vm_config.vm.synced_folder "/tmp/chef-vagrant-cache",
-      chef_host_cache_dir, :nfs => true
-
     vm_config.vm.provision :chef_solo do |chef|
       chef.log_level = :debug
-      chef.provisioning_path = "/tmp/chef-vagrant-cache"
+      chef.provisioning_path = "/vagrant/tmp/chef_cache"
 
       chef.run_list = [
         "recipe[apt]",
