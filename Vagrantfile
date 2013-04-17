@@ -2,10 +2,8 @@
 # vi: set ft=ruby :
 
 $:.unshift File.join(File.dirname(__FILE__), "lib")
-require 'berkshelf/vagrant'
 
 require 'lab/helpers'
-require 'lab/vagrant_middleware'
 
 # razor node and router/dhcp server
 def build_razor_node(config)
@@ -13,8 +11,10 @@ def build_razor_node(config)
     vm_config.vm.box      = "opscode-ubuntu-12.04"
     vm_config.vm.box_url  = oc_box_url(vm_config.vm.box)
 
-    vm_config.vm.host_name = "razor.razornet.local"
-    vm_config.vm.network :hostonly, razor_ip
+    vm_config.vm.hostname = "razor.razornet.local"
+    vm_config.vm.network :private_network, :ip => razor_ip
+
+    vm_config.berkshelf.enabled = true
 
     vm_config.vm.provision :chef_solo do |chef|
       chef.data_bags_path = "data_bags"
@@ -59,19 +59,19 @@ def build_client_nodes(config)
       vm_config.vm.box      = "blank-amd64"
       vm_config.vm.box_url  = "https://s3.amazonaws.com/fnichol/vagrant-base-boxes/blank-amd64-20121109.box"
 
-      unless ENV['NO_GUI']
-        vm_config.vm.boot_mode = 'gui'
+      vm_config.vm.provider "virtualbox" do |virtualbox|
+        virtualbox.gui = true unless ENV['NO_GUI']
+
+        # generate a new mac address for each node, to make them unique
+        virtualbox.customize ["modifyvm", :id, "--macaddress1", "auto"]
+
+        # put primary network interface into hostonly network segement
+        virtualbox.customize ["modifyvm", :id, "--nic1", "hostonly"]
+        virtualbox.customize ["modifyvm", :id, "--hostonlyadapter1", "vboxnet0"]
+
+        # pxe boot the node
+        virtualbox.customize ["modifyvm", :id, "--boot1", "net"]
       end
-
-      # generate a new mac address for each node, to make them unique
-      vm_config.vm.customize ["modifyvm", :id, "--macaddress1", "auto"]
-
-      # put primary network interface into hostonly network segement
-      vm_config.vm.customize ["modifyvm", :id, "--nic1", "hostonly"]
-      vm_config.vm.customize ["modifyvm", :id, "--hostonlyadapter1", "vboxnet0"]
-
-      # pxe boot the node
-      vm_config.vm.customize ["modifyvm", :id, "--boot1", "net"]
     end
   end
 end
@@ -82,16 +82,18 @@ def build_chef_node(config)
     vm_config.vm.box      = "opscode-ubuntu-12.04"
     vm_config.vm.box_url  = oc_box_url(vm_config.vm.box)
 
-    vm_config.vm.host_name = "chef.razornet.local"
-    vm_config.vm.network :hostonly, chef_server_ip
+    vm_config.vm.hostname = "chef.razornet.local"
+    vm_config.vm.network :private_network, :ip => chef_server_ip
 
-    vm_config.vm.customize ["modifyvm", :id, "--cpus", 2]
-    vm_config.vm.customize ["modifyvm", :id, "--memory", 1024]
+    vm_config.vm.provider "virtualbox" do |virtualbox|
+      virtualbox.customize ["modifyvm", :id, "--cpus", 2]
+      virtualbox.customize ["modifyvm", :id, "--memory", 1024]
+    end
 
     # create a cache directory outside the virtual machine to cache the large
     # omnibus package across vm creates/destroys
-    config.vm.share_folder "cache", "/tmp/chef-vagrant-cache",
-      chef_host_cache_dir, :create => true
+    vm_config.vm.synced_folder "/tmp/chef-vagrant-cache",
+      chef_host_cache_dir, :nfs => true
 
     vm_config.vm.provision :chef_solo do |chef|
       chef.log_level = :debug
@@ -121,8 +123,8 @@ def build_puppet_node(config)
     vm_config.vm.box      = "opscode-ubuntu-12.04"
     vm_config.vm.box_url  = oc_box_url(vm_config.vm.box)
 
-    vm_config.vm.host_name = "puppet.razornet.local"
-    vm_config.vm.network :hostonly, puppetmaster_ip
+    vm_config.vm.hostname = "puppet.razornet.local"
+    vm_config.vm.network :private_network, :ip => puppetmaster_ip
 
     vm_config.vm.provision :chef_solo do |chef|
       chef.run_list = [
@@ -146,8 +148,10 @@ def build_puppet_node(config)
   end
 end
 
-Vagrant::Config.run do |config|
+Vagrant.configure("2") do |config|
   include Lab::Helpers
+
+  config.berkshelf.enabled = true
 
   build_razor_node(config)
   build_chef_node(config)
