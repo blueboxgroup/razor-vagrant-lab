@@ -52,7 +52,7 @@ def build_razor_node(config)
           :images => {
             "rz_mk_#{mk_type}-image.#{mk_version}" => {
               'type' => 'mk',
-              'url' => "#{mk_url_prefix}/rz_mk_#{mk_type}-image.#{mk_version}.iso"
+              'url' => mk_url
             }
           }
         }
