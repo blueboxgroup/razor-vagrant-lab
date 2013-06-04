@@ -35,12 +35,19 @@ if ! command -v vagrant >/dev/null ; then
   fail "An installation of Vagrant could not be found, please install a package"
 fi
 
+banner "Checking for Vagrant"
 if [[ "$(vagrant --version)" < "Vagrant version 1.1.0" ]] ; then
   fail "Only Vagrant versions 1.1.0 and up are supported, please update"
 fi
 
-if ! vagrant plugin list | grep -q '^berkshelf-vagrant ' >/dev/null ; then
-  fail "Berkshelf Vagrant must be installed with: vagrant install berkshelf-plugin"
+banner "Checking for vagrant-berkshelf plugin"
+if ! vagrant plugin list | grep -q '^vagrant-berkshelf ' >/dev/null ; then
+  fail "Berkshelf Vagrant must be installed with: vagrant plugin install vagrant-berkshelf"
+fi
+
+banner "Checking for vagrant-omnibus plugin"
+if ! vagrant plugin list | grep -q '^vagrant-omnibus ' >/dev/null ; then
+  fail "vagrant-omnibus must be installed with: vagrant plugin install vagrant-omnibus"
 fi
 
 banner "Running 'berks install'"
