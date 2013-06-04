@@ -5,7 +5,7 @@ module Lab
   module Helpers
 
     def oc_box_url(name)
-      "https://opscode-vm.s3.amazonaws.com/vagrant/boxes/#{name}.box"
+      "https://opscode-vm.s3.amazonaws.com/vagrant/opscode_#{name}_provisionerless.box"
     end
 
     def razor_ip

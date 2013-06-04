@@ -156,6 +156,7 @@ Vagrant.configure("2") do |config|
   include Lab::Helpers
 
   config.berkshelf.enabled = true
+  config.omnibus.chef_version = :latest
 
   build_razor_node(config)
   build_chef_node(config)
