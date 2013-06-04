@@ -48,6 +48,9 @@ def build_razor_node(config)
           :tinydns_internal_resolved_domain => 'razornet.local'
         },
         :razor => {
+          :app => {
+            :git_rev => '7ce9619eb0e9e99be4b714939d4ad4586b3aba7d'
+          },
           :bind_address => razor_ip,
           :images => {
             "rz_mk_#{mk_type}-image.#{mk_version}" => {
