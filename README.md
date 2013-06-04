@@ -7,7 +7,9 @@ Download and install the following on your workstation:
 1. [VirtualBox][vb_site] (currently tested on version 4.2.4 on Mac)
 2. [VirtualBox Oracle VM VirtualBox Extension Pack][vb_site] (needed for
    PXE booting support)
-3. [Vagrant][vagrant_site] (package install is suggested)
+3. [Vagrant][vagrant_site] (package install, version 1.1.0 or higher)
+4. [vagrant-berkshelf plugin][vagrant_berkshelf] (needed to resolve and use cookbooks)
+5. [vagrant-omnibus plugin][vagrant_omnibus] (needed to install Chef on the Vagrant VMs)
 
 **Note:** please ensure that VirtualBox's DHCP server is not running,
 otherwise the razor client nodes may recieve IP address in the
@@ -187,6 +189,8 @@ limitations under the License.
 [vb_site]:      https://www.virtualbox.org/wiki/Downloads
 [veewee_site]:  https://github.com/jedi4ever/veewee
 [vagrant_site]: http://vagrantup.com/
+[vagrant_berkshelf]: http://berkshelf.com/
+[vagrant_omnibus]: https://github.com/schisamo/vagrant-omnibus
 [vwd_site]:     https://github.com/fnichol/veewee-definitions
 
 [fnichol]:      https://github.com/fnichol

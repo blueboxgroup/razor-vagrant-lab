@@ -6,8 +6,8 @@ cookbook 'apt'
 cookbook 'razor'
 
 # service dhcp requests
-cookbook 'dhcp',        :git => 'git://github.com/fnichol/dhcp-cookbook.git',
-                        :branch => 'craigtracey-with-upstart'
+cookbook 'dhcp',        :git => 'git://github.com/spheromak/dhcp-cook.git',
+                        :branch => 'dc054895e03c45fea951a7a509aad915512056bd'
 
 # become a router/gateway for razor nodes
 cookbook 'router',      :path => './cookbooks-internal/router'

@@ -5,7 +5,7 @@ module Lab
   module Helpers
 
     def oc_box_url(name)
-      "https://opscode-vm.s3.amazonaws.com/vagrant/boxes/#{name}.box"
+      "https://opscode-vm.s3.amazonaws.com/vagrant/opscode_#{name}_provisionerless.box"
     end
 
     def razor_ip
@@ -20,17 +20,21 @@ module Lab
       "172.16.33.31"
     end
 
+    def mk_url
+      "#{mk_url_prefix}/#{mk_type}/rz_mk_#{mk_type}-image.#{mk_version}.iso"
+    end
+
     def mk_type
       ENV["MK_TYPE"] || "prod"
     end
 
     def mk_version
-      ENV["MK_VERSION"] || "0.9.3.0"
+      ENV["MK_VERSION"] || "0.12.0"
     end
 
     def mk_url_prefix
       ENV["MK_URL_PREFIX"] ||
-        "https://github.com/downloads/puppetlabs/Razor-Microkernel"
+        "https://downloads.puppetlabs.com/razor/iso"
     end
 
     def razor_nodes
