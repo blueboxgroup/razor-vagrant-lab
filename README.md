@@ -13,7 +13,11 @@ Download and install the following on your workstation:
 
 **Note:** please ensure that VirtualBox's DHCP server is not running,
 otherwise the razor client nodes may recieve IP address in the
-`192.168.0.0.` range.
+`192.168.0.0.` range:
+```sh
+VBoxManage list dhcpservers                          # should show no dhcp servers
+VBoxManage dhcpserver remove --netname NETWORK_NAME  # otherwise, run this
+```
 
 Now clone this project repo to your workstation.
 
