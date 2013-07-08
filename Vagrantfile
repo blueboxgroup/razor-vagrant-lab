@@ -9,7 +9,7 @@ require 'lab/vagrant_middleware'
 # razor node and router/dhcp server
 def build_razor_node(config)
   config.vm.define :razor do |vm_config|
-    vm_config.vm.box      = "opscode-ubuntu-12.04"
+    vm_config.vm.box      = "opscode_ubuntu-12.04"
     vm_config.vm.box_url  = oc_box_url(vm_config.vm.box)
 
     vm_config.vm.hostname = "razor.razornet.local"
@@ -91,7 +91,7 @@ end
 # chef server for the razor chef broker
 def build_chef_node(config)
   config.vm.define :chef do |vm_config|
-    vm_config.vm.box      = "opscode-ubuntu-12.04"
+    vm_config.vm.box      = "opscode_ubuntu-12.04"
     vm_config.vm.box_url  = oc_box_url(vm_config.vm.box)
 
     vm_config.vm.hostname = "chef.razornet.local"
@@ -127,7 +127,7 @@ end
 # puppetmaster for the razor puppet broker
 def build_puppet_node(config)
   config.vm.define :puppet do |vm_config|
-    vm_config.vm.box      = "opscode-ubuntu-12.04"
+    vm_config.vm.box      = "opscode_ubuntu-12.04"
     vm_config.vm.box_url  = oc_box_url(vm_config.vm.box)
 
     vm_config.vm.hostname = "puppet.razornet.local"
